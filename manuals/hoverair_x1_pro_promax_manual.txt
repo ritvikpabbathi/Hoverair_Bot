@@ -1,0 +1,85 @@
+SOURCE: HOVERAir X1 PRO & PROMAX Pricing (official, us.hoverair.com / global.hoverair.com)
+SECTION: HOVERAir X1 PRO and PROMAX Price and Bundles
+Standard pricing from the official HOVERAir store:
+- X1 PRO (4K): USD $499
+- X1 PROMAX (8K): USD $699
+Bundle options (PROMAX):
+- Cycling Bundle: USD $1,089 — includes X1 PROMAX, 2 extra smart batteries, Beacon, power adapter, carry bag, ND filters, Charging Hub, handlebar mount.
+- All-in-One Bundle: USD $1,319 — includes X1 PROMAX, 2 extra thermal batteries, Beacon, JoySticks, wrist strap, PowerCase, handlebar mount, power adapter, carry bag, ND filters, Charging Hub, and additional accessories.
+All purchases include free shipping, a 15-day return guarantee, and a 1-year warranty. Purchase from the official store at hoverair.com.
+
+---
+SOURCE: HOVERAir X1 PRO & PROMAX Quick Start Guide (official, hoverair.com/pages/product-manuals)
+SECTION: Product Overview and Physical Specs
+The HOVERAir X1 PRO and X1 PROMAX are compact, foldable self-flying cameras. Both weigh under 250g (PRO: 191.5g, PROMAX: 192.5g), meaning no FAA drone license is required in most regions. Folded dimensions: 105 x 149 x 34 mm. Unfolded dimensions: 173 x 149 x 39 mm. Propellers are fully protected by plastic prop guards. The X1 PRO has 32GB internal storage plus a microSD slot (up to 1TB). The X1 PROMAX has 64GB internal storage plus a microSD slot (up to 1TB).
+
+SECTION: Camera Specifications
+X1 PRO camera: 1/2-inch sensor, 104° field of view, 17mm equivalent focal length, 12MP photos, max video 4K at 60fps, 1080p up to 120fps, vertical format 2.7K at 60fps, 100 Mbps bitrate.
+X1 PROMAX camera: 1/1.3-inch sensor, 107° field of view, 16mm equivalent focal length, 12MP and 48MP photos, max video 8K at 30fps or 4K at 120fps, 1080p up to 120fps, vertical format 4K at 30fps, 160 Mbps bitrate, HDR support, 10-bit H-Log and HLG color profiles.
+
+SECTION: Flight Performance and Battery
+Battery capacity: 1920 mAh smart battery. Theoretical flight time: 16 minutes. Real-world flight time: approximately 11 to 13 minutes. Maximum tracking speed: 42 km/h. Peak speed: 60 km/h. Wind resistance: Level 5 (up to 10.7 m/s / ~38 km/h). Maximum transmission distance with phone: 500m. Maximum transmission distance with Beacon remote: 1000m. The optional Thermo Smart Battery extends operation down to -20°C for cold-weather use. Battery lifespan: approximately 200 charge cycles.
+
+SECTION: How to Power On
+Unfold the arms of the X1 PRO or PROMAX. Press and hold the power button for 2 seconds until you hear the voice prompt and the status indicator lights up. Wait for the device to complete its startup sequence before flying.
+
+SECTION: How to Fly (Mode Selection and Takeoff)
+Hold the drone flat in your palm. Select a flight mode using the mode button or the X1 App. Press the power button once to take off. Once the propellers start spinning, remove your hand and the drone will fly in the selected mode. Do NOT put fingers or objects near the prop guard area while flying.
+
+SECTION: How to Land the Drone
+Place your hand approximately 20cm (8 inches) below the device and it will automatically detect your palm and land. Alternatively, grab the drone mid-flight and press the power button, or flip it upside down 180 degrees to immediately stop the propellers.
+
+SECTION: Flight Modes
+The X1 PRO and PROMAX support 15+ autonomous flight modes including:
+- Hover: the drone hovers in a fixed position and rotates to face the subject. Good for stationary shots and selfies.
+- Follow: the drone tracks you from behind, keeping you centered in the frame.
+- Side Track: flies parallel alongside the subject for dynamic side-angle shots.
+- Dolly Track: tracks from the front as you move toward or away from the drone.
+- Zoom Out: the drone flies backward and upward to reveal the surrounding environment while keeping the subject in frame.
+- Orbit: the drone circles 360 degrees around the subject at a consistent distance and altitude.
+- Bird's Eye: the drone ascends vertically with the camera pointing straight down.
+- Manual Mode: full user control using the virtual joystick in the X1 App or a physical Beacon JoyStick. Freely adjust position, altitude, direction, and camera angle.
+Additional cinematic and sport-specific modes are available to unlock and customize in the X1 App.
+
+SECTION: Obstacle Detection
+X1 PRO: equipped with rear proximity sensors. Obstacle detection is active only during Dolly Track mode and has limited range.
+X1 PROMAX: equipped with rear proximity sensors plus vision-based sensors for improved object recognition. Obstacle detection is active only during Dolly Track mode. Always fly with caution and check that the flight path is clear before starting.
+
+SECTION: Connecting to the App
+Download the X1 App on iOS or Android. Turn on Bluetooth on your phone. Open the app, go to the Hover tab, and tap to search for and connect to your device. Once connected via Bluetooth, you can adjust flight parameters, access all modes, and update firmware. To download media, connect your phone to the drone's WiFi network as prompted by the app.
+
+SECTION: Camera Settings (X1 PRO & PROMAX)
+Access camera settings from the X1 App while connected. Adjust video resolution, frame rate, EV (exposure value), ISO, and shutter speed. In Manual Control mode, tap the camera button on the left to open camera settings. The PROMAX supports H-Log and HLG 10-bit profiles for professional color grading workflows.
+
+SECTION: SD Card and Storage
+Both models support microSD cards up to 1TB for extended recording. To transfer files, you can remove the SD card directly and insert it into a card reader, or download files via the X1 App by connecting to the drone's WiFi.
+
+SECTION: Firmware Update
+Open the X1 App, go to the Hover tab, tap settings, and select "One-click Upgrade" if a new firmware version is available. The app downloads the firmware, then connects to the drone's WiFi to transfer the update. During upgrade the status light blinks; after success it turns solid green. Keep the battery above 30% and do not power off during the update.
+
+SECTION: Control Methods
+Three ways to control the X1 PRO and PROMAX:
+1. Autonomous flight: select a mode directly on the device and tap takeoff — no remote needed.
+2. X1 App: full control via the smartphone app including manual joystick, camera settings, and mode customization.
+3. Beacon remote with optional JoyStick: extends control range to 1000m, features a 1.78-inch screen, GPS, built-in microphone, and supports both gyroscopic tilt control and traditional joystick control. Long-press the Beacon's function button to activate Return to Home.
+
+SECTION: Return to Home
+In manual control mode via the app, tap the Return button to activate Return to Home. Using the Beacon remote, long-press the function button to trigger Return to Home. The drone will fly back and hover above its takeoff point.
+
+SECTION: Accessories
+- Beacon remote with JoyStick: extends range and adds full manual control.
+- PowerCase: protective carry case that also charges the battery, providing approximately 2.5x additional battery capacity.
+- Thermo Smart Battery: for cold-weather use down to -20°C.
+- Charging Hub: charge multiple batteries simultaneously.
+- Repair Kit: replacement propellers and parts.
+
+---
+SOURCE: HOVERAir X1 PRO & PROMAX Safety Instructions (official, hoverair.com/pages/product-manuals)
+SECTION: Age and Operator Restrictions
+Not intended for children under 14. Minors aged 14-18 must be supervised by a parent or professional. Do not operate while impaired by alcohol, medication, fatigue, dizziness, or any condition affecting judgment. Use extra caution near crowds, city buildings, or water.
+
+SECTION: Flight Environment
+Fly between 0.5m and 10m altitude for best vision positioning. Avoid flying at night, over reflective surfaces (water, snow, glass), in fog, dusty conditions, rain, or wind above Level 5 (~10.7 m/s). Do not fly below 0°C or above 40°C. Do not fly above 2000 meters altitude. At sandy beaches or dusty areas, use a landing pad to protect the motors.
+
+SECTION: Safety and Regulatory Compliance
+Keep the drone within line of sight at all times. Do not fly near airports, in restricted airspace, or over crowds. Know and follow your local drone regulations. The X1 PRO and PROMAX weigh under 250g, which exempts them from FAA registration requirements in the United States, but always verify local rules. Never modify the device or use non-official parts.

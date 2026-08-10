@@ -1,0 +1,86 @@
+SOURCE: HOVERAir AQUA Pricing (official, global.hoverair.com)
+SECTION: HOVERAir AQUA Price and Bundles
+The HOVERAir AQUA is available from the official HOVERAir store with the following pricing:
+- Standard Combo: USD $1,299 — includes AQUA with battery, USB-C cable, Lighthouse wearable with armband, repair kit, and waterproof battery bag.
+- Fly More Combo: USD $1,199 (early bird) — includes additional battery.
+- Land and Sea Package: USD $1,399 (early bird) — includes AQUA, extra batteries, and extended accessories.
+All purchases include free shipping, a 15-day return guarantee, and a 1-year warranty. Purchase from the official store at hoverair.com.
+
+---
+SOURCE: HOVERAir AQUA Quick Start Guide (official, hoverair.com/pages/product-manuals)
+SECTION: Product Overview
+The HOVERAir AQUA is a waterproof self-flying drone designed for water sports and aquatic environments. It has an IP67 waterproof rating, can take off directly from water, floats if the battery runs out, and is designed for activities like surfing, kayaking, SUP (stand-up paddleboarding), foiling, and snorkeling. Weight: 249g — no FAA license required. The AQUA features a built-in 1.6-inch AMOLED display for previewing shots and adjusting settings without your phone.
+
+SECTION: Physical Specs and Durability
+Weight: 249 grams. Waterproof rating: IP67. Materials: magnesium alloy heat sinks, stainless steel motor housings, titanium fasteners. The drone is self-righting: it can recover from being flipped upside down on water entry. It floats instead of sinking when the battery is depleted. Internal storage: 128GB UFS 2.2 (no microSD slot). Rinse with fresh water after use in saltwater or chlorinated pools to prevent corrosion.
+
+SECTION: Camera Specifications
+Sensor: 1/1.28-inch CMOS with HDR support. Photo: 12MP native, up to 48MP processed. Video: 4K at up to 100fps (slow-motion capable). Lens: hydrophobic nano-coated, self-heating, and anti-fog — designed to stay clear in wet, cold, and humid conditions. Stabilization: SmoothCapture 3.0. Tracking precision: centimeter-level accuracy using millimeter-wave radar.
+
+SECTION: Flight Performance
+Flight time: up to 23 minutes. Maximum speed: 34 mph (55 km/h). Wind resistance: Level 7 (up to 33 knots / 38 mph / 61 km/h). Minimum flight height above water surface: 5 cm.
+
+SECTION: Lighthouse Controller
+The AQUA comes with a Lighthouse controller — a wearable device that can be strapped to your wrist or arm. The Lighthouse handles: takeoff, Return to Home (RTH), and directional flight control, leaving your hands free for your activity. It does not require your phone to operate. Compatible with the X1 ProMax Beacon and JoyStick for full manual control.
+
+SECTION: How to Power On
+Press and hold the power button on the AQUA to power on. The built-in AMOLED display will light up showing battery level and current flight mode. Ensure the gimbal moves freely and propellers rotate without obstruction before takeoff.
+
+SECTION: How to Take Off (Three Methods)
+1. From water: place the AQUA flat on the water surface and press the Takeoff button on the Lighthouse controller. The drone will lift off directly from the water.
+2. From the ground: place the AQUA on a flat surface (use a landing pad on sandy or dusty surfaces) and press the Takeoff button on the Lighthouse.
+3. Hand launch: hold the AQUA by its top, release it into the air, and it will stabilize and begin flying in the selected mode.
+Caution: on sandy beaches always use a landing pad to prevent sand particles from entering the motors.
+
+SECTION: How to Land and Retrieve the AQUA
+There are two retrieval modes — choose before pressing RTH:
+- Hover mode: press the RTH button on the Lighthouse. The AQUA returns and hovers in place. If you move, it will follow you. To stop it, grab it from the top and immediately flip it upside down to stop the motors.
+- Land mode: press the RTH button on the Lighthouse. The AQUA returns and hovers at a safe distance. If you take no action for 15 seconds, it will gently land on the water surface so you can pick it up.
+
+SECTION: Flight Modes (15+)
+The AQUA supports 15+ autonomous flight modes including:
+- Follow: tracks you from the front, back, or side automatically. Best for most water and land activities.
+- Side Track: flies parallel alongside you for dynamic side-angle shots.
+- Dolly Track: tracks from the front as you move toward or away from the drone.
+- Overhead Follow: flies above and follows your movement with the camera pointing downward.
+- Hover: hovers in a fixed position. Use the Lighthouse or app to manually adjust the gimbal angle. Ideal for stationary shots.
+- Zoom Out: flies backward and upward while keeping the subject in frame, revealing the surroundings.
+- Orbit: circles 360 degrees around the subject at a consistent distance and altitude.
+- Bird's Eye: ascends vertically with the camera pointing straight down.
+- Spiral: spirals upward to capture dynamic, sweeping shots.
+- Gimbal Mode: the drone hovers in place while you manually control the camera direction via the app or Lighthouse.
+- Snorkel Mode: the AQUA floats on the water surface with the camera pointing downward for underwater-style shots.
+- Surf Mode: optimized for surfing — tracks dynamic, high-speed movements in breaking waves.
+- SUP Mode: adapted for stand-up paddleboarding — follows the natural trajectory and speed of the board on flat water.
+- Kayak Mode: optimized for seated paddling — provides steady, smooth tracking for forward-moving subjects.
+- Foil Mode: tracks subjects who are lifted above the water surface on a hydrofoil — keeps you centered as you rise.
+Select a flight mode on the AQUA's AMOLED display or via the X1 App before takeoff.
+
+SECTION: Adjusting Flight Parameters
+Once a flight mode is selected, press the Confirm button on the AQUA to access its settings (tracking distance, altitude, and camera angle). Alternatively, open the X1 App for full customization of all flight parameters.
+
+SECTION: Connecting to the App
+Download the X1 App on iOS or Android. Power on the AQUA. Open the app and connect via Bluetooth. Once connected, you can customize all flight modes, adjust camera settings, and download footage. To download media, connect your phone to the AQUA's WiFi network as prompted.
+
+SECTION: Manual Control with Beacon and JoySticks
+The AQUA is compatible with the HOVERAir Beacon and JoyStick controllers (sold separately). When paired with the Beacon and JoyStick, the AQUA switches into full manual control mode, allowing you to freely control the flight path, altitude, direction, and camera angle. This gives you complete creative control beyond the autonomous modes.
+
+SECTION: Storage and File Transfer
+The AQUA has 128GB of built-in UFS 2.2 storage — no microSD card slot. Transfer files by connecting the AQUA to your phone via WiFi through the X1 App, or by connecting the AQUA via USB to a computer.
+
+SECTION: Firmware Update
+Open the X1 App while connected to the AQUA. If a firmware update is available, tap to download and install. Keep battery above 30% and do not power off during the update.
+
+---
+SOURCE: HOVERAir AQUA Safety and Care Instructions (official, hoverair.com/pages/product-manuals)
+SECTION: Water Safety and Care
+The AQUA has an IP67 rating and is designed for water use, but follow these rules: Always rinse the drone with fresh water after use in saltwater or chlorinated water to prevent corrosion of internal components. Do not intentionally submerge beyond IP67 limits. Avoid launching in strong surf or rough water conditions that could flip the drone before it achieves stable flight. The drone will float if it loses power over water — retrieve it promptly.
+
+SECTION: Age and Operator Restrictions
+Not intended for children under 14 without supervision. Do not operate while impaired by alcohol, drugs, fatigue, or dizziness. Use extra caution near other water users, boats, and swimmers.
+
+SECTION: Flight Environment
+Do not fly in wind above Level 7 (33 knots). Minimum flight height above water surface is 5 cm. On sandy beaches, always use a landing pad — sand particles can damage the motors. Avoid flying in fog or heavy rain beyond the rated waterproof conditions. The AQUA's IP67 rating covers rain and water splashes during water sports but not pressure washing or deliberate deep immersion.
+
+SECTION: Regulatory Compliance
+The AQUA weighs 249g, which exempts it from FAA registration in the United States. Always check and follow local drone regulations. Do not fly near airports, over crowds, or in restricted airspace. Keep the drone within line of sight at all times.

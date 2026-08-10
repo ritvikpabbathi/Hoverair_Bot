@@ -1,0 +1,147 @@
+SOURCE: HOVERAir X1 Pricing (official, us.hoverair.com / global.hoverair.com)
+SECTION: HOVERAir X1 Price and Bundles
+The HOVERAir X1 is available in three bundles from the official HOVERAir store:
+- Fly More Combo: USD $299 — includes X1 with battery, 1 extra battery, Charging Hub, USB-C cable.
+- Combo Plus: USD $339 — includes X1 with battery, 2 extra batteries, Charging Hub, USB-C cable.
+- Combo MAX: USD $399 — includes X1 with battery, 4 extra batteries, Charging Hub, USB-C cable.
+All bundles include free shipping, a 15-day return guarantee, and a 1-year warranty. Purchase from the official store at hoverair.com.
+
+---
+SOURCE: HOVERAir Support Bot Guide
+SECTION: Products Covered by This Support Bot
+This support bot can answer questions about all current HOVERAir drone products: the HOVERAir X1, HOVERAir X1 PRO, HOVERAir X1 PROMAX, and HOVERAir AQUA. You can ask about setup, how to fly, flight modes, landing, connecting to the app, camera settings, firmware updates, accessories, safety rules, pricing, and specifications for any of these four products.
+
+SECTION: Full Product Comparison - X1 vs X1 PRO vs X1 PROMAX vs AQUA
+HOVERAir makes four drone products. Here is how they compare:
+
+HOVERAir X1 — entry-level, best for beginners and everyday use.
+- Weight: 125g. Flight time: 11.5 minutes. Camera: 2.7K 30fps, 12MP. Storage: 32GB internal.
+- Price: from $299 (Fly More Combo) to $399 (Combo MAX).
+- No SD card slot. Wind resistance: Level 4. No beacon support.
+- Best for: travel, family moments, casual everyday content.
+
+HOVERAir X1 PRO — mid-range, best for sports and travel creators.
+- Weight: 191.5g. Flight time: 16 minutes. Camera: 4K 60fps, 12MP. Storage: 32GB + microSD up to 1TB.
+- Price: $499 (standard).
+- Beacon remote support (up to 1km range). Wind resistance: Level 5. Rear proximity sensors.
+- Best for: cycling, skiing, hiking, sports filming.
+
+HOVERAir X1 PROMAX — flagship, best for professional and cinematic content.
+- Weight: 192.5g. Flight time: 16 minutes. Camera: 8K 30fps / 4K 120fps, 48MP. Storage: 64GB + microSD up to 1TB.
+- Price: $699 (standard), up to $1,319 (All-in-One Bundle).
+- HDR, 10-bit H-Log, 160Mbps bitrate. Vision-based rear collision detection. Beacon support.
+- Best for: cinematic production, advanced sports filming, professional creators.
+
+HOVERAir AQUA — waterproof, best for water sports.
+- Weight: 249g. Flight time: 23 minutes. Camera: 4K 100fps, 48MP. Storage: 128GB internal (no SD card).
+- Price: $1,299 (Standard Combo).
+- IP67 waterproof, floats on water, self-righting. Lighthouse wearable controller. Wind resistance: Level 7.
+- Best for: surfing, kayaking, SUP, foiling, snorkeling, any water activity.
+
+Key differences summary:
+- Cheapest: X1 ($299+). Most expensive: AQUA ($1,299+).
+- Best camera quality: PROMAX (8K). Only waterproof model: AQUA.
+- Longest flight time: AQUA (23 min). Lightest: X1 (125g).
+- Only model with SD card: X1 PRO and X1 PROMAX.
+- Only model with Lighthouse controller: AQUA.
+
+---
+SOURCE: HOVERAir X1 Quick Start Guide (official, hoverair.com/pages/product-manuals)
+SECTION: Product Parts and Layout
+Hover Camera X1 (HOVERAir X1) parts: Downward Vision System (bottom vision sensor used for stable hovering and positioning), Propellers, Motors, Heat Vents, Battery, Status Indicator light, Gimbal Camera, Prop Guard (protective frame around the propellers), Mode Button, Power & Takeoff Button, Battery Level Indicator.
+
+SECTION: Step 1 - Download the App
+Scan the QR code on the device packaging or visit the app store to download and install the Hover X1 App (available for iOS and Android).
+
+SECTION: Step 2 - Charge the Battery
+Before using HoverAir X1 for the first time, be sure to fully charge it. Connect the USB cable and USB power source. While the battery is charging, the LED battery level lights blink. When the battery is fully charged, the LEDs will be always-on or always-off (steady, not blinking).
+
+SECTION: Step 3 - Power On
+Press and hold the power button for 2 seconds until you hear the voice prompt, and the status indicator lights up in green. Wait about 7 seconds, and HoverAir X1 will power on.
+
+SECTION: Step 4 - How to Fly the Drone (Mode Selection and Takeoff)
+This is how you fly the HoverAir X1: open up the HoverAir X1 (unfold the arms) and hold it flat in your palm. Short press the mode button (located behind the power button) to select the flight mode of your choice. You can long press the mode button to toggle/cycle parameters for each flight mode. Short press the power button to take off and start flying. Once the propellers have started spinning, remove your hand from under the device and the drone will fly on its own in the selected mode.
+Caution: Do NOT stick fingers or anything else into the propeller area / prop guard. Refer to the Disclaimer and Safety Instructions for more detail.
+
+SECTION: Step 5 - How to Land the Drone (Palm Landing / Retrieving It Mid-Flight)
+This is how you land or stop the HoverAir X1 while it is flying: grab the HoverAir X1 mid-flight and press the power button, OR flip it upside down 180 degrees, and the propellers will stop spinning. Alternatively, at the end of a flight or during continuous flight modes, place your hand about 20cm below the device and it will automatically land in your hand and the propellers will stop spinning.
+
+SECTION: Step 6 - Connecting to the App
+Make sure your mobile device's Bluetooth and WiFi are turned on. Connecting to the device is managed entirely from the app; there is no need to connect to the Hover via your phone's WiFi/Bluetooth settings menu directly. Open the Hover X1 App and select Hover -> "Click to activate/connect". You may be prompted to allow the app to access Bluetooth. Once connected, you can use the app to change flight mode settings. To download your media (photos/videos), select the "Album" icon; you will be prompted to connect to the Hover's WiFi to complete the download.
+
+---
+SOURCE: HOVERAir X1 App Instructions (official, hoverair.com/pages/product-manuals)
+SECTION: App Overview
+The Hover X1 App has four main tabs:
+- Home: view and manage downloaded content (photos/videos).
+- Hover: functions related to the device itself, including downloading footage, setting flight/capture parameters, and upgrading firmware.
+- Modes: learn about and unlock the various flight/capture modes.
+- Me: manage your account and connected Hover devices.
+
+SECTION: Connecting the Hover to the App (Bluetooth Pairing)
+1. Power on the Hover by pressing and holding the power button for 2 seconds until the green indicator lights up.
+2. Open the App, tap to enter the camera/Hover page, and turn on Bluetooth when prompted.
+3. Tap to search for a nearby Hover, then select the device to connect based on its device name.
+Note: If the app cannot find your Hover for an extended period, press and hold the "Power Button" and "Mode Button" together for 3 seconds until the status indicator blinks blue, then try connecting again.
+Note: To download footage from the device, you must additionally connect your phone to the Hover's own WiFi network (a separate step from Bluetooth pairing), and wait for the connection to complete as instructed in the app.
+
+SECTION: Downloading Captured Photos/Videos
+After each Bluetooth connection to the Hover, if there is newly captured footage, tap the camera page to view thumbnails and select which files to download. You can tap the storage icon to view how much storage space is used on the device. After downloading, content can be viewed on the Home page of the app or in your phone's local photo album.
+
+SECTION: Flight Mode Parameters and Smart Preview
+After Bluetooth is connected, tap the settings icon on the Hover page to view and modify the parameters of each flight mode (e.g. Orbit, Follow, Bird's Eye, Continuous shooting) for better shots. Tap "Smart Preview" on the Hover page to preview and control the Hover flying a pre-set creative trajectory and taking pictures/video automatically.
+
+SECTION: Manual Control Mode
+Tap "Manual Control" on the Hover page to pilot the Hover yourself and capture a custom flight path. On the Manual Control screen: tap to take off/land, use the directional controls to move the Hover forward/backward/left/right, up/down, and turn left/right, adjust the gimbal pitch angle, and tap the shutter icon to take a photo or start/stop video recording.
+
+SECTION: Firmware Update
+Check your current firmware version under Firmware Upgrade in the app. If a newer firmware version is available:
+1. On the camera/Hover page, tap the settings icon and select "One-click Upgrade".
+2. The app will download the firmware package, then prompt you to connect to the Hover's WiFi to transfer the firmware package to the device.
+3. Once the transfer completes, the Hover begins upgrading. During the upgrade, the status light blinks blue; once the upgrade succeeds, the status light turns solid green.
+4. After a successful upgrade, the app displays the new firmware version number.
+Important: During firmware upgrade, keep the Hover at room temperature with a battery charge above 30%, and do not power off the device or exit the app during the process.
+
+SECTION: General App Settings
+- Anti-stroboscopic (iOS): adapts the camera to the local power/electrical frequency of different countries/regions to prevent flicker (strobing) artifacts when shooting under artificial lighting.
+- Account management (under "Me"): change your username, avatar, linked phone number/email, change your login password, log out, or delete/cancel your account.
+- My Hover (under "Me"): view your connected device's name, serial number (SN code), firmware version, and binding status. You can rename or unbind/remove the device here.
+- About: view the app version, privacy policy, and terms of service.
+
+---
+SOURCE: HOVERAir X1 Disclaimer and Safety Instructions (official, hoverair.com/pages/product-manuals)
+SECTION: Age Restrictions and Who Should Not Operate the Device (Is This Safe for Kids?)
+Hover Camera X1 is a small smart flying camera, not a toy, and not intended for young children to use unsupervised. It should not be operated by: children age 14 or under; teenagers/minors age 14-18 must be accompanied by a parent or professional; anyone under the influence of alcohol or medication, or who is dizzy or in poor physical/mental condition; anyone otherwise unable to safely operate the device. Use extra caution around crowds, city buildings, low flying heights, or near water.
+
+SECTION: Flight Environment Requirements
+The HoverAir X1 uses a downward-facing vision positioning system, so:
+- Fly between 0.5m and 10m above the ground.
+- Avoid flying at night or in low-light conditions; the vision system may fail.
+- Avoid flying over surfaces with unclear texture: large solid-color areas, water, transparent/glass surfaces, strongly reflective surfaces, areas with rapidly changing lighting, or moving objects below the drone.
+- Keep the downward vision sensors clean and unobstructed; do not fly in dusty or misty conditions.
+- Do not fly with large sudden changes in ground height (e.g., flying out of a high-rise window).
+- Do not fly in severe weather: wind above roughly 5.4 m/s, rain, snow, lightning, or fog.
+- Do not fly when the temperature is below 0°C or above 40°C.
+- Do not fly above 2000 meters altitude.
+- Fly with caution in sandy/dusty environments like deserts or beaches to prevent particles entering the drone.
+
+SECTION: Wireless Communication Requirements
+Operate the Hover in open spaces. Avoid flying near sources of electromagnetic interference, including WiFi hotspots, Bluetooth devices, high-voltage power lines/stations, radar stations, cell towers, and TV broadcast towers, as these can disrupt the wireless connection or cause the device to stop responding normally.
+
+SECTION: Pre-Flight Checklist
+Before flying: ensure the battery is fully charged; ensure the drone body and all components (prop guard, battery, propellers, gimbal) are properly installed and working; ensure the firmware and app are updated to the latest version; make sure you have read and understood the User Manual, Quick Guide, and related documents.
+
+SECTION: Operating Precautions
+Do not approach spinning propellers or motors. Fly in open, well-lit environments suited to the vision positioning system, avoiding reflective surfaces like water or snow. In automatic/smart flight modes, ensure the flight path is clear of obstacles and stay alert to your surroundings, stopping the flight immediately if anything unsafe occurs. Make sure the drone is charged and functioning properly before capturing important footage, and always power it down correctly to avoid losing or corrupting media files. Do not apply force to or block the gimbal. Use only official ZeroZeroTech/HOVERAir parts. Do not disassemble or modify the device.
+
+SECTION: Other Safety Rules
+Do not operate the drone while impaired (alcohol, drugs, dizziness, fatigue, nausea). Never use the drone to throw or launch objects at buildings, people, or animals. Do not use a drone that has experienced a serious crash or abnormal flight behavior without inspection. Respect others' privacy; do not use the drone to violate anyone's privacy or rights. Know and follow local drone laws; never use the device for illegal activity such as espionage or military use. Never insert fingers or objects into the prop guard.
+
+SECTION: Flight Regulations and No-Fly Restrictions
+Do not fly in areas prohibited by local law or in sensitive/restricted zones. Do not fly near manned aircraft, in densely populated areas, or at temporary large public events. Keep the drone within your direct line of sight at all times (use an observer to help if needed). Never use the drone to transport illegal or dangerous objects. Obtain any required local flight permits before flying. Flight-restricted areas commonly include major airports, major cities/regions, and temporary event zones — check with local flight authorities and always download the latest official firmware, since no-fly zone data can be enforced via firmware/geofencing.
+
+SECTION: Storage and Transportation (Traveling or Flying on a Plane With the Drone)
+If you are traveling by airplane, note that battery transport is regulated by airlines, so check your airline's rules before your flight and pack batteries according to their guidance (see below). Store the HoverAir X1 in a protective case, away from direct sunlight and without squeezing it. Never expose the drone to liquids or submerge it in water; if it gets wet, dry it promptly and do NOT power it on immediately after water exposure (this can cause permanent damage). Recommended battery storage temperature: -10°C to 30°C for short-term storage (under 3 months), or 25°C ±3°C for long-term storage (over 3 months). Check battery health in the app and replace the battery after roughly 300 charge cycles. When transporting batteries, keep them around 23°C ±5°C, follow airline regulations for carrying batteries, and never transport a damaged or abnormal battery.
+
+SECTION: Compliance and Regulatory Notes
+This device complies with FCC Part 15 rules (Class B digital device) and Innovation, Science and Economic Development Canada's license-exempt RSS standards. For RF exposure safety, maintain a minimum distance of 20cm (8 inches) between the device's antenna and your body during normal operation. Unauthorized changes or modifications not approved by the responsible party could void the user's authority to operate the equipment. Risk of explosion if the battery is replaced with an incorrect type — dispose of used batteries according to local instructions.
