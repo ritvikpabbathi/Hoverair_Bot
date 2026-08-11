@@ -1,13 +1,13 @@
 """
-FAQ cache: reuses a past Claude answer when a new question is a semantic
-match for one already asked (by any user, chat or talk), so paraphrases
-like "How to fly the drone" / "How do I fly the drone" / "Give me
-instructions to fly the drone" cost one Claude call instead of one each.
+FAQ cache: reuses a past answer when a new question is a close match for
+one already asked (by any user, chat or talk), so near-duplicate phrasing
+doesn't cost another Ollama generation call each time.
 
-Matching uses the same TF-IDF + cosine-similarity technique app.py's
-retrieve() uses for manual sections, just applied to past question text -
-no extra dependency, no extra Claude call. Chat and talk are cached
-separately since their answer style/length differ (see build_prompt()).
+Matching uses TF-IDF + cosine-similarity over past question text — a
+different (cheaper, dependency-light) technique than app.py's retrieve(),
+which uses nomic-embed-text semantic embeddings for manual sections. Chat
+and talk are cached separately since their answer style/length differ (see
+build_system_prompt()).
 """
 
 import json

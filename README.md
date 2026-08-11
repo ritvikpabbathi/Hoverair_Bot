@@ -1,88 +1,103 @@
-# HOVERAir X1 Manual Assistant (RAG demo)
+# HOVERAir Manual Assistant (RAG demo)
 
-A chatbot that answers questions about the HOVERAir X1 drone by retrieving
-the relevant section of the official manual and having Claude answer strictly
-from that text, with a citation back to the section it used. This is the
-prototype described in the opportunity report: HOVERAir currently has no
-smart support assistant, only a static PDF and a contact form.
+A chatbot that answers questions about HOVERAir's drone lineup (X1, X1 PRO,
+X1 PROMAX, AQUA) by retrieving the relevant section(s) of the official
+manuals and having a locally-hosted LLM answer strictly from that text,
+with citations back to the sections used. This is the prototype described
+in the opportunity report: HOVERAir currently has no smart support
+assistant, only static PDFs and a contact form.
+
+Everything runs locally through **Ollama** — no API key, no per-request
+cost, no data leaving your machine.
 
 ## How it works
 
-1. `manuals/hoverair_x1_manual.txt` holds the official Quick Start Guide, App
-   Instructions, and Safety Instructions, organized into `SOURCE:` /
-   `SECTION:` blocks.
-2. `build_index.py` splits the manual into per-section chunks and builds a
-   TF-IDF vector index over them (via scikit-learn). No model download
-   needed, and it retrieves well for a manual-sized corpus because
-   questions and answers tend to share vocabulary ("firmware", "land",
-   "flight mode", etc). If you want to handle more paraphrased/casual
-   questions later, swap the `retrieve()` function in `app.py` for real
-   sentence embeddings (e.g. sentence-transformers or Voyage AI) — same
-   interface, better semantic matching, more setup.
-3. `app.py` is a small Flask server. For each question it retrieves the
-   top matching sections, then sends only those sections to Claude Haiku
-   4.5 with instructions to answer only from that text and cite the
-   section used. This keeps answers grounded and keeps the cost tiny
-   (a few hundred tokens per question).
+1. `manuals/*.txt` holds the official Quick Start Guides and Safety
+   Instructions for each product, organized into `SOURCE:` / `SECTION:`
+   blocks. All manual files are indexed together, so one bot covers the
+   whole product line.
+2. `build_index.py` splits each manual into per-section chunks and embeds
+   them with `nomic-embed-text` via Ollama, storing the result in
+   `index.pkl`. Semantic embeddings (not keyword matching) mean paraphrased
+   or conversational questions still find the right section even with
+   little shared vocabulary — e.g. "Is it safe to fly in the rain?" finds
+   "Flight Environment Requirements".
+3. `app.py` is a Flask server. For each question it embeds the question,
+   retrieves the top matching manual sections, and streams an answer
+   token-by-token from `llama3.1:8b` (via Ollama) with instructions to
+   answer only from those excerpts and never from outside knowledge.
+   Follow-up questions carry conversation history for context. Price
+   questions get live pricing pulled from HOVERAir's Shopify store
+   (`price_fetcher.py`) injected into the prompt. Common/repeated
+   first-time questions are served instantly from a local FAQ cache
+   (`faq_cache.py`) instead of re-running the model.
 4. `static/index.html` offers two modes, switched with a toggle at the top:
-   - **Chat with the Agent** - type a question, get a written answer with
-     a "Source: ..." citation line and source chips.
-   - **Talk to the Agent** - tap the mic button and ask out loud. The
-     browser's built-in Web Speech API transcribes it locally (no
-     server round-trip for speech-to-text) and submits it to `/api/chat`
-     tagged `mode: "talk"`, which asks Claude for a short, conversational,
-     unformatted answer (no markdown, no citation line) suited to being
-     read out loud via the browser's speech synthesis. The text still
-     appears in the chat transcript (with source chips) as a reference.
+   - **Chat with the Agent** — type a question, get a written answer with
+     source citation chips.
+   - **Talk to the Agent** — tap the mic button and ask out loud. The
+     browser's built-in Web Speech API transcribes it locally (no server
+     round-trip for speech-to-text) and submits it to `/api/chat` tagged
+     `mode: "talk"`, which asks for a short, conversational, unformatted
+     answer suited to being read out loud via the browser's speech
+     synthesis. The full text still appears in the chat transcript (with
+     source chips) as a reference.
 
    Both modes answer strictly from the retrieved manual excerpts and never
    state a fact that isn't in them. If a question isn't covered by the
-   manual (e.g. "what's the return policy?"), the agent doesn't just give
-   a flat canned refusal — it names the topic it heard, says plainly that
-   the manual doesn't cover it, and suggests checking HOVERAir's website
-   or support, without guessing at what the actual answer might be.
+   manuals, or is about a different brand/product, the agent doesn't just
+   give a flat canned refusal — it says plainly that it's out of scope and
+   points to HOVERAir support, without guessing at what the actual answer
+   might be.
 
 ## Setup
 
 ```bash
 cd hoverair_bot
-pip install -r requirements.txt
-python build_index.py          # builds index.pkl from the manual
-export ANTHROPIC_API_KEY=sk-ant-...   # get one at console.anthropic.com
-python app.py
+python3 -m venv venv && ./venv/bin/pip install -r requirements.txt
+
+ollama pull llama3.1:8b          # generation model (~4.9 GB, one-time)
+ollama pull nomic-embed-text     # embedding model (~274 MB, one-time)
+
+./venv/bin/python build_index.py    # builds index.pkl from manuals/
+./venv/bin/python app.py            # serves on http://localhost:5001
 ```
+
+Ollama itself must be running (`ollama serve`, or the Ollama.app menu bar
+app) before `build_index.py` or `app.py` will work.
 
 Then open http://localhost:5001 in your browser.
 
-## Cost
+## Performance
 
-Each question costs a fraction of a cent (Claude Haiku 4.5: $1/$5 per
-million input/output tokens, and each request is only a few hundred to
-~1,000 tokens of manual context). New Anthropic accounts also get a small
-amount of free trial credit.
+`llama3.1:8b` is genuinely slow on hardware that can't hold the whole model
+in GPU/unified memory — 10-70+ seconds per answer is normal, not a bug.
+Run `ollama ps` to see the current CPU/GPU split if answers feel unusually
+slow.
 
 ## Extending this to a different product
 
-1. Replace `manuals/hoverair_x1_manual.txt` with a new manual, using the
-   same `SOURCE:` / `SECTION:` structure so citations keep working.
+1. Add a new `manuals/<product>_manual.txt` file, using the same
+   `SOURCE:` / `SECTION:` structure so chunking and citations keep working.
+   Existing manual files can stay — all `.txt` files in `manuals/` are
+   indexed together.
 2. Re-run `python build_index.py`.
-3. Update the product name in `app.py` (`build_prompt`) and the suggested
-   questions in `static/index.html`.
+3. Update the product list in `app.py`'s `build_system_prompt()` and the
+   suggested questions in `static/index.html`.
+4. If the product has live pricing on the Shopify store, add its JSON
+   endpoint to `PRODUCT_ENDPOINTS` in `price_fetcher.py`.
 
 ## Known limitations (worth knowing before demoing)
 
-- TF-IDF retrieval matches on shared words, not meaning — it won't
-  reliably catch a heavily reworded question that shares no vocabulary
-  with the manual (e.g. "it won't stop spinning" vs. "propellers do not
-  stop after landing" would actually work here since "propellers"/"stop"
-  overlap, but a truly unrelated phrasing might miss). This is a known,
-  documented tradeoff, not a bug — the fix is swapping in embeddings.
-- Answers are only as good as the manual text included. The manual here
-  covers flying, the app, firmware updates, and safety; it does not cover
+- Local inference is slow relative to a hosted API, especially on hardware
+  that can't fit the whole model in GPU/unified memory — 10-70+ seconds
+  per answer is expected here.
+- Answers are only as good as the manual text included — it doesn't cover
   every edge case (e.g. detailed troubleshooting for specific error
   codes), since HOVERAir doesn't publish that publicly.
-- This is a prototype, not a production support tool: no conversation
-  history/memory across turns, no rate limiting, no auth.
+- This is a prototype, not a production support tool: no auth, no rate
+  limiting, and the dev server binds to every network interface with
+  Werkzeug's debugger active — fine for solo local use, not safe to leave
+  running on a shared network.
 - Talk mode relies on the browser's `SpeechRecognition`/`SpeechSynthesis`
   APIs: works well in Chrome and Edge, is unsupported in Firefox, and is
   partial in Safari. It also requires a secure context (HTTPS, or
