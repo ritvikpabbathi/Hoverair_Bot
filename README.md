@@ -7,8 +7,12 @@ with citations back to the sections used. This is the prototype described
 in the opportunity report: HOVERAir currently has no smart support
 assistant, only static PDFs and a contact form.
 
-Everything runs locally through **Ollama** — no API key, no per-request
-cost, no data leaving your machine.
+Retrieval (embedding manual text to find the right section) runs locally
+through **Ollama** — no API key, no data leaving your machine for that
+step. Answer generation, and talk mode's speech-to-text and text-to-speech,
+run on **Groq's** free-tier cloud API instead of a local model, since Groq's
+hosted inference is both faster and lighter on local hardware than running
+a full LLM/STT/TTS stack locally.
 
 ## How it works
 
@@ -22,25 +26,29 @@ cost, no data leaving your machine.
    or conversational questions still find the right section even with
    little shared vocabulary — e.g. "Is it safe to fly in the rain?" finds
    "Flight Environment Requirements".
-3. `app.py` is a Flask server. For each question it embeds the question,
-   retrieves the top matching manual sections, and streams an answer
-   token-by-token from `llama3.1:8b` (via Ollama) with instructions to
-   answer only from those excerpts and never from outside knowledge.
-   Follow-up questions carry conversation history for context. Price
-   questions get live pricing pulled from HOVERAir's Shopify store
-   (`price_fetcher.py`) injected into the prompt. Common/repeated
-   first-time questions are served instantly from a local FAQ cache
-   (`faq_cache.py`) instead of re-running the model.
+3. `app.py` is a Flask server. For each question it embeds the question via
+   Ollama, retrieves the top matching manual sections, and streams an
+   answer token-by-token from a Groq-hosted Llama model
+   (`llama-3.1-8b-instant`) with instructions to answer only from those
+   excerpts and never from outside knowledge. Follow-up questions carry
+   conversation history for context. Price questions get live pricing
+   pulled from HOVERAir's Shopify store (`price_fetcher.py`) injected into
+   the prompt. Common/repeated first-time questions are served instantly
+   from a local FAQ cache (`faq_cache.py`) instead of re-running the model.
 4. `static/index.html` offers two modes, switched with a toggle at the top:
    - **Chat with the Agent** — type a question, get a written answer with
      source citation chips.
    - **Talk to the Agent** — tap the mic button and ask out loud. The
-     browser's built-in Web Speech API transcribes it locally (no server
-     round-trip for speech-to-text) and submits it to `/api/chat` tagged
+     browser records audio with `MediaRecorder` (auto-stopping after ~1.8s
+     of detected silence) and uploads it to `/api/transcribe`, which sends
+     it to Groq's Whisper (`whisper-large-v3-turbo`) for transcription. The
+     transcribed question is submitted to `/api/chat` tagged
      `mode: "talk"`, which asks for a short, conversational, unformatted
-     answer suited to being read out loud via the browser's speech
-     synthesis. The full text still appears in the chat transcript (with
-     source chips) as a reference.
+     answer. Each sentence is spoken as soon as it finishes streaming in
+     (via `/api/tts`, Groq's Orpheus TTS model) rather than waiting for the
+     whole answer, with the next sentence's audio prefetched during
+     playback so there's no gap between them. The full text still appears
+     in the chat transcript (with source chips) as a reference.
 
    Both modes answer strictly from the retrieved manual excerpts and never
    state a fact that isn't in them. If a question isn't covered by the
@@ -55,24 +63,35 @@ cost, no data leaving your machine.
 cd hoverair_bot
 python3 -m venv venv && ./venv/bin/pip install -r requirements.txt
 
-ollama pull llama3.1:8b          # generation model (~4.9 GB, one-time)
-ollama pull nomic-embed-text     # embedding model (~274 MB, one-time)
+ollama pull nomic-embed-text     # embedding model (~274 MB, one-time) — only local model needed
+
+cp .env.example .env             # then add your GROQ_API_KEY (free at console.groq.com)
 
 ./venv/bin/python build_index.py    # builds index.pkl from manuals/
 ./venv/bin/python app.py            # serves on http://localhost:5001
 ```
 
 Ollama itself must be running (`ollama serve`, or the Ollama.app menu bar
-app) before `build_index.py` or `app.py` will work.
+app) before `build_index.py` or `app.py` will work — it's only used for
+embeddings now, not for generation.
+
+A `GROQ_API_KEY` is required in `.env` — get one free at
+[console.groq.com](https://console.groq.com) (API Keys in the sidebar, no
+billing setup needed for the free tier). The Orpheus TTS model
+(`canopylabs/orpheus-v1-english`) additionally requires accepting its terms
+once in the Groq console before `/api/tts` will work — visit the
+[playground](https://console.groq.com/playground?model=canopylabs%2Forpheus-v1-english)
+and accept when prompted.
 
 Then open http://localhost:5001 in your browser.
 
 ## Performance
 
-`llama3.1:8b` is genuinely slow on hardware that can't hold the whole model
-in GPU/unified memory — 10-70+ seconds per answer is normal, not a bug.
-Run `ollama ps` to see the current CPU/GPU split if answers feel unusually
-slow.
+Generation now runs on Groq's cloud inference, so answers are fast
+regardless of local hardware — no more 10-70s waits. The only local model
+left is `nomic-embed-text` for retrieval, which is small and fast on any
+machine. Groq's free tier is rate-limited rather than metered, so a burst
+of rapid requests could get throttled, but normal usage is unaffected.
 
 ## Extending this to a different product
 
@@ -88,9 +107,10 @@ slow.
 
 ## Known limitations (worth knowing before demoing)
 
-- Local inference is slow relative to a hosted API, especially on hardware
-  that can't fit the whole model in GPU/unified memory — 10-70+ seconds
-  per answer is expected here.
+- This now depends on Groq's cloud API for generation, STT, and TTS — it no
+  longer works fully offline, and needs a working internet connection plus
+  a valid `GROQ_API_KEY`. Retrieval (embeddings) is the only step still
+  fully local.
 - Answers are only as good as the manual text included — it doesn't cover
   every edge case (e.g. detailed troubleshooting for specific error
   codes), since HOVERAir doesn't publish that publicly.
@@ -98,12 +118,13 @@ slow.
   limiting, and the dev server binds to every network interface with
   Werkzeug's debugger active — fine for solo local use, not safe to leave
   running on a shared network.
-- Talk mode relies on the browser's `SpeechRecognition`/`SpeechSynthesis`
-  APIs: works well in Chrome and Edge, is unsupported in Firefox, and is
-  partial in Safari. It also requires a secure context (HTTPS, or
-  `localhost` which is treated as secure) — the mic button auto-disables
-  itself if the browser doesn't support voice input at all.
-- Talk mode waits ~1.8s of silence after your last word before treating
-  the question as finished (instead of cutting off at the first short
-  pause), so it's a `setTimeout` guess, not true end-of-speech detection —
-  a long mid-question pause could still finalize early.
+- Talk mode records audio via `MediaRecorder` and needs microphone
+  permission plus a secure context (HTTPS, or `localhost` which is treated
+  as secure) — the mic button auto-disables itself if the browser doesn't
+  support `MediaRecorder` at all.
+- Talk mode waits ~1.8s of detected silence (via a Web Audio RMS level
+  check) before treating the question as finished, so it's a threshold
+  guess, not true end-of-speech detection — a long mid-question pause could
+  still finalize early.
+- Groq's free tier is rate-limited, not unlimited — fine for a prototype or
+  demo, could throttle under sustained heavy use.

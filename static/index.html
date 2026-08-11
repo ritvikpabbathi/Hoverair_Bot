@@ -272,7 +272,7 @@ let conversationHistory = [];
 function setMode(mode) {
   if (mode === currentMode) return;
   stopSpeaking();
-  if (recognition && isListening) recognition.stop();
+  if (isListening) stopRecording();
   currentMode = mode;
   document.body.classList.toggle('mode-chat', mode === 'chat');
   document.body.classList.toggle('mode-talk', mode === 'talk');
@@ -319,21 +319,103 @@ function addSources(container, sources) {
 
 function setVoiceStatus(text) { voiceStatus.textContent = text || ''; }
 
+let currentAudio = null;
+
+// ── Sentence-by-sentence TTS queue ──────────────────────────────────────────
+// Waiting for the full answer to finish streaming before starting TTS makes
+// talk mode feel delayed. Instead, sentences are sent to /api/tts and spoken
+// as soon as each one completes during the stream, with the next sentence's
+// audio prefetched while the current one plays so there's no gap between them.
+let ttsQueue      = [];
+let ttsPlaying    = false;
+let ttsPrefetch   = null; // Promise<Blob> for ttsQueue[0], kicked off during current playback
+
 function stopSpeaking() {
-  if (window.speechSynthesis) window.speechSynthesis.cancel();
+  ttsQueue = [];
+  ttsPrefetch = null;
+  ttsPlaying = false;
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
+    currentAudio = null;
+  }
   micBtn.classList.remove('speaking');
 }
 
-function speakAnswer(text) {
-  if (!window.speechSynthesis) return;
-  stopSpeaking();
-  const spoken = text.replace(/\n?Source:.*$/gim, '').trim();
-  if (!spoken) return;
-  const utterance = new SpeechSynthesisUtterance(spoken);
-  utterance.onstart  = () => { micBtn.classList.add('speaking'); setVoiceStatus('Speaking...'); };
-  utterance.onend    = () => { micBtn.classList.remove('speaking'); setVoiceStatus('Tap the button and ask your question'); };
-  utterance.onerror  = () => { micBtn.classList.remove('speaking'); setVoiceStatus('Tap the button and ask your question'); };
-  window.speechSynthesis.speak(utterance);
+async function synthesizeSpeech(text) {
+  const res = await fetch('/api/tts', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text }),
+  });
+  if (!res.ok) throw new Error('TTS request failed');
+  return res.blob();
+}
+
+function enqueueSpeech(text) {
+  const trimmed = text.replace(/\n?Source:.*$/gim, '').trim();
+  if (!trimmed) return;
+  ttsQueue.push(trimmed);
+  pumpTtsQueue();
+}
+
+async function pumpTtsQueue() {
+  if (ttsPlaying || ttsQueue.length === 0) return;
+  ttsPlaying = true;
+  const text = ttsQueue.shift();
+
+  let blob;
+  try {
+    blob = ttsPrefetch ? await ttsPrefetch : await synthesizeSpeech(text);
+  } catch (err) {
+    ttsPlaying = false;
+    pumpTtsQueue();
+    return;
+  }
+  ttsPrefetch = null;
+
+  // Start fetching the next sentence's audio now, while this one plays.
+  if (ttsQueue.length > 0) {
+    ttsPrefetch = synthesizeSpeech(ttsQueue[0]).catch(() => null);
+  }
+
+  const url = URL.createObjectURL(blob);
+  currentAudio = new Audio(url);
+  currentAudio.onplay = () => { micBtn.classList.add('speaking'); setVoiceStatus('Speaking...'); };
+  await new Promise(resolve => {
+    currentAudio.onended = resolve;
+    currentAudio.onerror = resolve;
+    currentAudio.play();
+  });
+  URL.revokeObjectURL(url);
+
+  ttsPlaying = false;
+  if (ttsQueue.length > 0) {
+    pumpTtsQueue();
+  } else {
+    micBtn.classList.remove('speaking');
+    setVoiceStatus('Tap the button and ask your question');
+  }
+}
+
+// Finds sentences in `text` that end in . ! or ? followed by real whitespace
+// already received (not just wherever the stream currently happens to end —
+// that would false-positive on things like "191.5" mid-token). Returns the
+// complete sentences found and how many characters of `text` they consumed;
+// any trailing partial sentence is left for the next call (or the final flush).
+function extractCompleteSentences(text) {
+  const sentences = [];
+  let start = 0;
+  const re = /[.!?]+(?=\s)/g;
+  let m;
+  let consumed = 0;
+  while ((m = re.exec(text)) !== null) {
+    const end = m.index + m[0].length;
+    sentences.push(text.slice(start, end).trim());
+    start = end;
+    consumed = end;
+  }
+  return { sentences, consumed };
 }
 
 // ── Main ask function (streaming) ───────────────────────────────────────────
@@ -361,6 +443,7 @@ async function ask(question, opts = {}) {
 
   let streamedText  = '';
   let firstToken    = true;
+  let spokenChars   = 0; // how much of streamedText has already been sent to TTS (talk mode)
 
   try {
     const res = await fetch('/api/chat', {
@@ -413,6 +496,19 @@ async function ask(question, opts = {}) {
           streamedText += data.token;
           botBubble.textContent = streamedText;
           chat.scrollTop = chat.scrollHeight;
+
+          // Speak completed sentences as they arrive instead of waiting for
+          // the whole answer. Skip until enough text is in to rule out a
+          // decline-marker prefix (spoken aloud would sound wrong) — the
+          // decline case just falls through to the final flush below instead.
+          if (mode === 'talk' && !streamedText.startsWith('[[NOT_IN_MANUAL')
+              && streamedText.length > spokenChars) {
+            const { sentences, consumed } = extractCompleteSentences(streamedText.slice(spokenChars));
+            if (consumed > 0) {
+              spokenChars += consumed;
+              sentences.forEach(enqueueSpeech);
+            }
+          }
         }
 
         if (data.done) {
@@ -425,7 +521,12 @@ async function ask(question, opts = {}) {
           // Store clean answer in history for follow-up context
           conversationHistory.push({ role: 'assistant', content: data.answer });
 
-          if (mode === 'talk') speakAnswer(data.answer);
+          if (mode === 'talk') {
+            // Speak whatever's left: either the entire answer (decline case,
+            // or nothing was flushed yet) or just the trailing partial sentence.
+            const remainder = spokenChars > 0 ? data.answer.slice(spokenChars) : data.answer;
+            enqueueSpeech(remainder);
+          }
         }
       }
     }
@@ -449,76 +550,118 @@ document.querySelectorAll('#suggestions button').forEach(btn => {
   btn.addEventListener('click', () => ask(btn.dataset.q, { mode: 'chat' }));
 });
 
-// ── Talk mode (Web Speech API) ───────────────────────────────────────────────
-const SpeechRecognitionImpl = window.SpeechRecognition || window.webkitSpeechRecognition;
-let recognition    = null;
-let isListening    = false;
-let finalTranscript = '';
-let lastInterim    = '';
-let silenceTimer   = null;
-const SILENCE_MS   = 1800;
+// ── Talk mode (MediaRecorder -> Groq Whisper via /api/transcribe) ────────────
+// Groq handles STT/LLM/TTS in the cloud; the browser only records audio and
+// detects silence (via Web Audio RMS level) to decide when the question is
+// "done" — mirrors the old SpeechRecognition silence-timer behavior since
+// letting the browser cut off on the first short pause was a worse UX.
+let mediaRecorder    = null;
+let audioChunks      = [];
+let isListening       = false;
+let recordStream      = null;
+let audioCtx          = null;
+let analyser          = null;
+let silenceTimer      = null;
+let recordStartTime   = 0;
+const SILENCE_MS         = 1800;
+const SILENCE_RMS_THRESHOLD = 0.02;
+const MIN_RECORD_MS      = 400;
 
-function armSilenceTimer() {
-  clearTimeout(silenceTimer);
-  silenceTimer = setTimeout(() => { if (isListening) recognition.stop(); }, SILENCE_MS);
+function monitorSilence() {
+  if (!isListening || !analyser) return;
+  const data = new Uint8Array(analyser.fftSize);
+  analyser.getByteTimeDomainData(data);
+  let sumSquares = 0;
+  for (let i = 0; i < data.length; i++) {
+    const v = (data[i] - 128) / 128;
+    sumSquares += v * v;
+  }
+  const rms = Math.sqrt(sumSquares / data.length);
+  if (rms > SILENCE_RMS_THRESHOLD) {
+    clearTimeout(silenceTimer);
+    silenceTimer = setTimeout(stopRecording, SILENCE_MS);
+  }
+  requestAnimationFrame(monitorSilence);
 }
 
-if (!SpeechRecognitionImpl) {
+async function startRecording() {
+  try {
+    recordStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  } catch (err) {
+    addMessage('Microphone access denied. Please allow microphone access and try again.', 'error');
+    setVoiceStatus('Microphone access denied');
+    return;
+  }
+
+  audioChunks = [];
+  mediaRecorder = new MediaRecorder(recordStream);
+  mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+  mediaRecorder.onstop = handleRecordingStop;
+
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const source = audioCtx.createMediaStreamSource(recordStream);
+  analyser = audioCtx.createAnalyser();
+  analyser.fftSize = 2048;
+  source.connect(analyser);
+
+  mediaRecorder.start();
+  isListening = true;
+  recordStartTime = Date.now();
+  micBtn.classList.add('listening');
+  setVoiceStatus('Listening… take your time');
+  silenceTimer = setTimeout(stopRecording, SILENCE_MS);
+  monitorSilence();
+}
+
+function stopRecording() {
+  if (!isListening) return;
+  isListening = false;
+  clearTimeout(silenceTimer);
+  micBtn.classList.remove('listening');
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+  if (recordStream) recordStream.getTracks().forEach(t => t.stop());
+  if (audioCtx) { audioCtx.close(); audioCtx = null; }
+}
+
+async function handleRecordingStop() {
+  if (Date.now() - recordStartTime < MIN_RECORD_MS || audioChunks.length === 0) {
+    setVoiceStatus('Tap the button and ask your question');
+    return;
+  }
+  const blob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
+  setVoiceStatus('Transcribing...');
   micBtn.disabled = true;
-  micBtn.title    = 'Voice input not supported (try Chrome or Edge)';
-  setVoiceStatus('Voice input not supported in this browser (try Chrome or Edge)');
-} else {
-  recognition = new SpeechRecognitionImpl();
-  recognition.lang            = 'en-US';
-  recognition.continuous      = true;
-  recognition.interimResults  = true;
 
-  recognition.onstart = () => {
-    isListening = true;
-    finalTranscript = '';
-    lastInterim = '';
-    micBtn.classList.add('listening');
-    setVoiceStatus('Listening… take your time');
-    armSilenceTimer();
-  };
-
-  recognition.onresult = event => {
-    let interim = '';
-    for (let i = event.resultIndex; i < event.results.length; i++) {
-      const piece = event.results[i][0].transcript;
-      if (event.results[i].isFinal) finalTranscript += piece + ' ';
-      else interim += piece;
-    }
-    lastInterim = interim;
-    const shown = (finalTranscript + interim).trim();
-    setVoiceStatus(shown ? `"${shown}"` : 'Listening… take your time');
-    armSilenceTimer();
-  };
-
-  recognition.onerror = event => {
-    clearTimeout(silenceTimer);
-    micBtn.classList.remove('listening');
-    if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-      addMessage('Microphone access denied. Please allow microphone access and try again.', 'error');
-      setVoiceStatus('Microphone access denied');
-    } else if (event.error !== 'no-speech' && event.error !== 'aborted') {
+  try {
+    const formData = new FormData();
+    formData.append('audio', blob, 'recording.webm');
+    const res = await fetch('/api/transcribe', { method: 'POST', body: formData });
+    const data = await res.json().catch(() => ({}));
+    micBtn.disabled = false;
+    if (!res.ok || data.error) {
       setVoiceStatus('Tap the button and ask your question');
+      addMessage(data.error || 'Transcription failed.', 'error');
+      return;
     }
-  };
-
-  recognition.onend = () => {
-    isListening = false;
-    micBtn.classList.remove('listening');
-    clearTimeout(silenceTimer);
-    const question = (finalTranscript || lastInterim).trim();
+    const question = (data.text || '').trim();
     if (question) ask(question, { mode: 'talk' });
     else setVoiceStatus('Tap the button and ask your question');
-  };
+  } catch (err) {
+    micBtn.disabled = false;
+    setVoiceStatus('Tap the button and ask your question');
+    addMessage('Could not reach the server for transcription.', 'error');
+  }
+}
 
+if (!navigator.mediaDevices || !window.MediaRecorder) {
+  micBtn.disabled = true;
+  micBtn.title    = 'Voice input not supported in this browser';
+  setVoiceStatus('Voice input not supported in this browser');
+} else {
   micBtn.addEventListener('click', () => {
     stopSpeaking();
-    if (isListening) recognition.stop();
-    else recognition.start();
+    if (isListening) stopRecording();
+    else startRecording();
   });
 }
 </script>

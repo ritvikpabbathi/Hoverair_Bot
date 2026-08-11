@@ -3,22 +3,26 @@ Backend for the HOVERAir multi-product support chatbot.
 
 Flow per question:
   1. FAQ cache check — return instantly if question was answered before.
-  2. Semantic retrieval — embed the question with nomic-embed-text and find
-     the most relevant manual sections via cosine similarity.
+  2. Semantic retrieval — embed the question with nomic-embed-text (local,
+     via Ollama) and find the most relevant manual sections via cosine
+     similarity. Groq has no embeddings API, so this step stays local.
   3. Inject live pricing if the question is price-related.
-  4. Stream the answer token-by-token from llama3.1:8b via Ollama, with
+  4. Stream the answer token-by-token from Groq (GROQ_LLM_MODEL), with
      conversation history for follow-up question support.
   5. Cache the completed answer for future identical/paraphrased questions.
 
 Run:
   ollama pull nomic-embed-text   # embedding model (one-time)
-  ollama pull llama3.1:8b        # generation model (one-time)
+  # GROQ_API_KEY must be set in .env — generation, talk-mode STT, and
+  # talk-mode TTS all run on Groq's cloud API, not Ollama.
   python build_index.py          # builds index.pkl from manuals/
   python app.py                  # serves on http://localhost:5001
 """
 
 import json
+import os
 import pickle
+import tempfile
 from pathlib import Path
 
 import numpy as np
@@ -34,16 +38,36 @@ load_dotenv(BASE_DIR / ".env")
 INDEX_PATH = BASE_DIR / "index.pkl"
 
 TOP_K = 5
-MODEL = "llama3.1:8b"
 EMBED_MODEL = "nomic-embed-text"
 OLLAMA_URL = "http://localhost:11434"
 DECLINE_MARKER = "[[NOT_IN_MANUAL]]"
 CHAT_MAX_TOKENS = 500
 TALK_MAX_TOKENS = 150
 
+# Answer generation (both chat and talk mode) runs on Groq's free cloud API.
+# Talk mode additionally uses Groq for STT and TTS. Only retrieval
+# (embed_query, via EMBED_MODEL/OLLAMA_URL above) stays on local Ollama —
+# Groq has no embeddings API — so Ollama must still be running.
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
+GROQ_LLM_MODEL = "llama-3.1-8b-instant"
+GROQ_STT_MODEL = "whisper-large-v3-turbo"
+GROQ_TTS_MODEL = "canopylabs/orpheus-v1-english"
+GROQ_TTS_VOICE = "troy"
+
 app = Flask(__name__, static_folder=str(BASE_DIR / "static"))
 
 _index_cache = None
+_groq_client = None
+
+
+def get_groq_client():
+    global _groq_client
+    if _groq_client is None:
+        if not GROQ_API_KEY:
+            raise RuntimeError("GROQ_API_KEY is not set in .env")
+        from groq import Groq
+        _groq_client = Groq(api_key=GROQ_API_KEY)
+    return _groq_client
 
 
 def load_index():
@@ -146,6 +170,51 @@ def index_page():
     return send_from_directory(str(BASE_DIR / "static"), "index.html")
 
 
+@app.route("/api/transcribe", methods=["POST"])
+def transcribe():
+    if "audio" not in request.files:
+        return jsonify({"error": "audio file is required"}), 400
+    audio_file = request.files["audio"]
+    try:
+        client = get_groq_client()
+        result = client.audio.transcriptions.create(
+            file=(audio_file.filename or "recording.webm", audio_file.read()),
+            model=GROQ_STT_MODEL,
+            response_format="text",
+        )
+        text = result if isinstance(result, str) else getattr(result, "text", "")
+        return jsonify({"text": text.strip()})
+    except Exception as e:
+        app.logger.error("Groq transcription failed: %s", e)
+        return jsonify({"error": f"Transcription failed: {e}"}), 500
+
+
+@app.route("/api/tts", methods=["POST"])
+def tts():
+    data = request.get_json(force=True) or {}
+    text = (data.get("text") or "").strip()
+    if not text:
+        return jsonify({"error": "text is required"}), 400
+    try:
+        client = get_groq_client()
+        speech = client.audio.speech.create(
+            model=GROQ_TTS_MODEL,
+            voice=GROQ_TTS_VOICE,
+            input=text,
+            response_format="wav",
+        )
+        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
+            tmp_path = tmp.name
+        speech.write_to_file(tmp_path)
+        with open(tmp_path, "rb") as f:
+            audio_bytes = f.read()
+        os.remove(tmp_path)
+        return Response(audio_bytes, mimetype="audio/wav")
+    except Exception as e:
+        app.logger.error("Groq TTS failed: %s", e)
+        return jsonify({"error": f"Speech synthesis failed: {e}"}), 500
+
+
 @app.route("/api/chat", methods=["POST"])
 def chat():
     data = request.get_json(force=True) or {}
@@ -206,35 +275,26 @@ def chat():
 
     # --- Stream response ---
     def generate():
-        import httpx
-        import ollama
         full_answer = [""]
+
         try:
-            app.logger.info("Streaming from Ollama model=%s", MODEL)
-            client = ollama.Client(timeout=300)
-            stream = client.chat(
-                model=MODEL,
+            app.logger.info("Streaming from Groq model=%s", GROQ_LLM_MODEL)
+            client = get_groq_client()
+            stream = client.chat.completions.create(
+                model=GROQ_LLM_MODEL,
                 messages=messages,
+                max_tokens=max_tokens,
+                temperature=0.0,
                 stream=True,
-                keep_alive="30m",
-                options={"num_predict": max_tokens, "temperature": 0.0},
             )
             for chunk in stream:
-                token = chunk.message.content
+                token = chunk.choices[0].delta.content
                 if token:
                     full_answer[0] += token
                     yield f"data: {json.dumps({'token': token})}\n\n"
-        except httpx.TimeoutException as e:
-            app.logger.error("Ollama streaming timed out: %s", e)
-            yield f"data: {json.dumps({'error': 'The model is taking too long to respond. It may still be loading or your machine may be under heavy load — please try again.'})}\n\n"
-            return
-        except httpx.ConnectError as e:
-            app.logger.error("Ollama connection failed: %s", e)
-            yield f"data: {json.dumps({'error': 'Could not reach Ollama. Make sure it is running (ollama serve).'})}\n\n"
-            return
         except Exception as e:
-            app.logger.error("Ollama streaming failed: %s", e)
-            yield f"data: {json.dumps({'error': f'Ollama error: {e}'})}\n\n"
+            app.logger.error("Groq streaming failed: %s", e)
+            yield f"data: {json.dumps({'error': f'Groq error: {e}'})}\n\n"
             return
 
         answer_text = full_answer[0].strip()
